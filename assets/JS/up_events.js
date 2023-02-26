@@ -1,4 +1,4 @@
-let eventcards = document.getElementById("cartas");
+let eventCards = document.getElementById("cartas");
 
 const fragment = document.createDocumentFragment();
 
@@ -178,18 +178,20 @@ const data = {
 
 const currentDate = data.currentDate
 
-function cartsss(array, container) {
+function carta(array, container) {
     for (let newcard of array) {
-        if (currentDate < array.date) {
+        if (currentDate < newcard.date) {
             let div = document.createElement("div")
-            div.className = "card col-6 col-sm-4 m-2"
+            div.className = "card col-4 col-sm-3 m-2"
             div.innerHTML += `
         <img src="${newcard.image}" class="card-img-top" alt="disfraces">
         <div class="card-body">
-            <h5 class="card-title">${newcard.name}</h5>
-            <p class="card-text">${newcard.category}</p>
-            <a href="#" class="card-link me-4">${newcard.price}</a>
+            <h5 class="card-title d-flex justify-content-center">${newcard.name}</h5>
+            <p class="card-text d-flex justify-content-center">${newcard.category}</p>
+            <div class="d-flex justify-content-around">
+            <a href="#" class="card-link">${newcard.price}</a>
             <a href="./pages/details.html" class="btn btn-primary">See more...</a>
+            </div>
         </div>`
             fragment.appendChild(div);
         }
@@ -197,4 +199,4 @@ function cartsss(array, container) {
     container.appendChild(fragment);
 }
 
-cartsss(data.events, eventcard)
+carta(data.events, eventCards)

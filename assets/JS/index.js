@@ -1,28 +1,40 @@
-import data from './amazing.js';
-
-console.log([document])
-
 const eventsCards = document.getElementById("cartas");
-
 const checkbox = document.getElementById("chbox");
-
 const $search = document.getElementById("search")
-
 const fragment = document.createDocumentFragment();
 
-function carta(array, container) {
+async function getData(){
+    try{
+        let apiUrl = './assets/JS/amazing.json'
+        const response = await fetch(apiUrl);
+        data = await response.json();
+        createCategory(data);
+        Carta(data.events, eventsCards);
+        createChbox(Categories, checkbox)
+        
+    }
+    catch (error){
+        console.log(error);
+    }
+}
+getData()
+
+let data=""
+let Categories=""
+
+function Carta(array, container) {
     container.innerHTML = ""
-    for (let newcard of array) {
+    for (let card of array) {
         let div = document.createElement("div")
         div.className = "card col-4 col-sm-3 m-2"
         div.innerHTML += `
-        <img src="${newcard.image}" class="card-img-top" alt="${newcard.name.toLowerCase()}">
+        <img src="${card.image}" class="card-img-top" alt="${card.name.toLowerCase()}">
         <div class="card-body">
-            <h5 class="card-title d-flex justify-content-center">${newcard.name}</h5>
-            <p class="card-text d-flex justify-content-center">${newcard.category}</p>
+            <h5 class="card-title d-flex justify-content-center">${card.name}</h5>
+            <p class="card-text d-flex justify-content-center">${card.category}</p>
             <div class="d-flex justify-content-around">
-            <a href="#" class="card-link me-4">${newcard.price}</a>
-            <a href="./pages/details.html?id=${newcard._id}" class="btn btn-primary">See more...</a>
+            <a href="#" class="card-link me-4">$${card.price}</a>
+            <a href="./pages/details.html?id=${card._id}" class="btn btn-primary">See more...</a>
             </div>
         </div>`
         fragment.appendChild(div);
@@ -30,20 +42,16 @@ function carta(array, container) {
     container.appendChild(fragment);
 }
 
-carta(data.events, eventsCards)
-
 const createCategory = (array) => {
-    let categories = array.map(category => category.category)
-    categories = categories.reduce((cosa, otraCosa) => {
+    let categories = array.events.map(category => category.category)
+    Categories = categories.reduce((cosa, otraCosa) => {
         if (!cosa.includes(otraCosa)) {
             cosa.push(otraCosa);
         }
         return cosa
     }, [])
-    return categories
+    return Categories
 }
-
-let categories = createCategory(data.events)
 
 const createChbox = (categories, checkbox) => {
     categories.forEach(category => {
@@ -57,14 +65,12 @@ const createChbox = (categories, checkbox) => {
     });
 }
 
-createChbox(categories, checkbox)
-
-const filtSearch = (array, value) => {
+const FiltSearch = (array, value) => {
     let filtrsearch = array.filter(buscador => buscador.name.toLowerCase().includes(value.toLowerCase().trim()))
     return filtrsearch
 }
 
-const filtCheck = (array, value) => {
+const FiltCheck = (array, value) => {
     const checkedCategories = Array.from(checkbox.querySelectorAll('input[type="checkbox"]:checked')).map((el) => el.value);
     if (checkedCategories.length === 0) {
         return array;
@@ -75,13 +81,14 @@ const filtCheck = (array, value) => {
 }
 
 
+
 $search.addEventListener('keyup', (e) =>{
-    let datereando = filtSearch(data.events, e.target.value)
-    carta(datereando, eventsCards)
+    let datereando = FiltSearch(data.events, e.target.value)
+    Carta(datereando, eventsCards)
 })
 
 
 checkbox.addEventListener('change', (e) => {
-    let nuevofiltrado = filtCheck(data.events, e.target.value)
-    carta(nuevofiltrado, eventsCards)
+    let nuevofiltrado = FiltCheck(data.events, e.target.value)
+    Carta(nuevofiltrado, eventsCards)
 })
